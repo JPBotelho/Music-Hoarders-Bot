@@ -27,20 +27,33 @@ class Discogs:
                 self.d = discogs_client.Client('Bot', user_token=self.token)
 
     def SearchRelease(self, query):
-        #try:
-        finalQuery = query.lower()
-        results = self.d.search(finalQuery, type="release")
-        artist = results[0].artists[0].name
-        #country = results[0].country
-        genre = results[0].genres[0]
-        title = results[0].title
-        year = results[0].year
-        url = results[0].url
-        trackCount = len(results[0].tracklist)
-        label = results[0].labels[0].name
-        items = results.count
-        #print(results[0].artists[0].name)
-        finalOutput = f"""**{items} items found for** "{query}" **on Discogs.**\n**Artist:** {artist}\n**Title:** {title}\n**Year:** {year}\n**Genre:** {genre}\n**Tracks:** {trackCount}\n**Label:** {label}\n{url}"""
-        return finalOutput
-        #except:
-        #	return "No results found."
+        try:
+            finalQuery = query.lower()
+            results = self.d.search(finalQuery, type="release")
+            artist = results[0].artists[0].name
+            #country = results[0].country
+            genre = results[0].genres[0]
+            title = results[0].title
+            year = results[0].year
+            url = results[0].url
+            trackCount = len(results[0].tracklist)
+            label = results[0].labels[0].name
+            items = results.count
+            finalOutput = f"""**{items} releases found for** "{query}" **on Discogs.**\n**Artist:** {artist}\n**Title:** {title}\n**Year:** {year}\n**Genre:** {genre}\n**Tracks:** {trackCount}\n**Label:** {label}\n{url}"""
+            return finalOutput
+        except:
+            return "Something went wrong."
+    def SearchArtist(self, query):
+        try:
+            finalQuery = query.lower()
+            results = self.d.search(finalQuery, type="artist")
+
+            items = results.count
+            name = results[0].name
+            realName = results[0].real_name
+            releaseCount = results[0].releases.count
+            url = results[0].url
+            finalOutput = f"""**{items} artists found for** "{query}" **on Discogs.**\n**Name:** {name}\n**Real Name:** {realName}\n**Releases:** {releaseCount}\n{url}"""
+            return finalOutput
+        except:
+            return "Something went wrong."

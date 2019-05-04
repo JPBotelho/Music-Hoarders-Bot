@@ -33,12 +33,28 @@ async def on_ready():
 
 @bot.command()
 async def discogs(ctx, *queries):
-    query = " ".join(queries)
-    if "@everyone" in query:
-        await ctx.send("Nice try, asshat.")
-    else:
-        message = dscgs.SearchRelease(query)
-        await ctx.send(message)
+    if(len(queries) >= 2):
+        if(queries[0] == "release"):
+            queryList = list(queries)
+            del queryList[0]
+            # Merge all arguments into a single string separated by a string (except for the first one, which defines the subcommand)
+            finalQuery = " ".join(queryList)
+            if "@everyone" in finalQuery:
+                await ctx.send("Nice try, asshat.")
+            else:
+                message = dscgs.SearchRelease(finalQuery)
+                await ctx.send(message)
+        elif(queries[0] == "artist"):
+            queryList = list(queries)
+            del queryList[0]
+            finalQuery = " ".join(queryList)
+            if "@everyone" in finalQuery:
+                await ctx.send("Nice try, asshat.")
+            else:
+                message = dscgs.SearchArtist(finalQuery)
+                await ctx.send(message)
+        else:
+            await ctx.send("Invalid syntax.")
 
 @bot.command()
 async def youtube(ctx, *queries):
