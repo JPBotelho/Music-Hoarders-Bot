@@ -18,8 +18,8 @@ if filename:
 yt = Youtube()
 yt.Init()
 
-dscogs = Discogs()
-dscogs.Init()
+dscgs = Discogs()
+dscgs.Init()
 
 description = "An example bot to showcase the discord.ext.commands extension module."
 bot = commands.Bot(command_prefix='?', description=description)
@@ -37,7 +37,7 @@ async def discogs(ctx, *queries):
     if "@everyone" in query:
         await ctx.send("Nice try, asshat.")
     else:
-        message = dscogs.Search(query)
+        message = dscgs.SearchRelease(query)
         await ctx.send(message)
 
 @bot.command()
@@ -55,6 +55,7 @@ async def musicbrainz(ctx, *queries):
         if(queries[0] == "release"):
             queryList = list(queries)
             del queryList[0]
+            # Merge all arguments into a single string separated by a string (except for the first one, which defines the subcommand)
             finalQuery = " ".join(queryList)
             if "@everyone" in finalQuery:
                 await ctx.send("Nice try, asshat.")

@@ -3,6 +3,7 @@ import discord
 from discord.ext import commands
 import random
 import json
+import discogs_client
 
 headers = {
     'Upgrade-Insecure-Requests': '1',
@@ -12,31 +13,34 @@ headers = {
 
 filename = "D:/Repos/AudioManiac-Bot/credentials.json"
 class Discogs:
+    d = None
     key = ""
     secret = ""
+    token = ""
     def Init(self):
         if filename:
             with open(filename, 'r') as f:
                 data = json.load(f)
                 self.key = data["discogskey"]
                 self.secret = data["discogssecret"]
-    def Search(self, query):
-        try:
-            finalQuery = query.lower()
-            url = f"https://api.discogs.com/database/search?q=\"{finalQuery}\"&key={self.key}&secret={self.secret}"
-            downloadData = requests.get(url, headers=headers).text
-    	
-            parser = json.loads(downloadData)
-            items = parser["pagination"]["items"]
-            pages = parser["pagination"]["pages"]
+                self.token = data["discogstoken"]
+                self.d = discogs_client.Client('Bot', user_token=self.token)
 
-
-            firstResultType = parser["results"][0]["type"]
-            firstResultId = parser["results"][0]["id"]
-            firstResultTitle = parser["results"][0]["title"]
-            firstResultLink = "https://www.discogs.com"+parser["results"][0]["uri"]
-            
-            finalOutput = f"""**{items} items found for** "{query}" **on Discogs.**\n**Title:** {firstResultTitle}\n**Type:** {firstResultType}\n{firstResultLink}"""
-            return finalOutput
-        except:
-        	return "No results found."
+    def SearchRelease(self, query):
+        #try:
+        finalQuery = query.lower()
+        results = self.d.search(finalQuery, type="release")
+        artist = results[0].artists[0].name
+        #country = results[0].country
+        genre = results[0].genres[0]
+        title = results[0].title
+        year = results[0].year
+        url = results[0].url
+        trackCount = len(results[0].tracklist)
+        label = results[0].labels[0].name
+        items = results.count
+        #print(results[0].artists[0].name)
+        finalOutput = f"""**{items} items found for** "{query}" **on Discogs.**\n**Artist:** {artist}\n**Title:** {title}\n**Year:** {year}\n**Genre:** {genre}\n**Tracks:** {trackCount}\n**Label:** {label}\n{url}"""
+        return finalOutput
+        #except:
+        #	return "No results found."
